@@ -1,0 +1,303 @@
+/* ═══════════════════════════════════════════════════════
+   SMART PARKING — STYLESHEET
+   Dirancang untuk tampilan fullscreen di monitor
+═══════════════════════════════════════════════════════ */
+
+/* RESET */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* BODY */
+body {
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: #0a0f1e;
+  color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ────────────────────────── */
+
+.sp-header {
+  background: linear-gradient(135deg, #0d1b2a, #1b2838);
+  border-bottom: 3px solid #1e88e5;
+  padding: 18px 40px;
+}
+
+.sp-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.sp-logo {
+  font-size: 2.8rem;
+}
+
+.sp-title {
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+}
+
+.sp-subtitle {
+  font-size: 0.9rem;
+  color: #90a4ae;
+  margin-top: 3px;
+}
+
+/* ── RINGKASAN ─────────────────────── */
+
+.sp-summary {
+  display: flex;
+  gap: 20px;
+  padding: 24px 40px;
+  justify-content: center;
+}
+
+.sp-card-stat {
+  flex: 1;
+  max-width: 200px;
+  text-align: center;
+  padding: 22px 16px;
+  border-radius: 16px;
+  border: 2px solid transparent;
+}
+
+.sp-stat-num {
+  font-size: 3.8rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.sp-stat-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 8px;
+  opacity: 0.8;
+}
+
+/* WARNA KARTU */
+
+.sp-green {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+}
+
+.sp-green .sp-stat-num {
+  color: #10b981;
+}
+
+.sp-red {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+}
+
+.sp-red .sp-stat-num {
+  color: #ef4444;
+}
+
+.sp-gray {
+  background: rgba(100, 116, 139, 0.15);
+  border-color: #64748b;
+}
+
+.sp-gray .sp-stat-num {
+  color: #94a3b8;
+}
+
+/* ── PETA SLOT ─────────────────────── */
+
+.sp-map {
+  flex: 1;
+  padding: 8px 40px 16px;
+}
+
+.sp-map-title {
+  text-align: center;
+  font-size: 1rem;
+  letter-spacing: 4px;
+  color: #546e7a;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.sp-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.sp-loading {
+  color: #546e7a;
+  font-size: 1.1rem;
+  padding: 40px;
+}
+
+/* ── KARTU SLOT PARKIR ───────────────── */
+
+.sp-slot {
+  width: 170px;
+  padding: 26px 18px;
+  border-radius: 20px;
+  text-align: center;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+  cursor: default;
+}
+
+.sp-slot:hover {
+  transform: translateY(-5px);
+}
+
+/* SLOT KOSONG */
+
+.sp-slot.kosong {
+  background: linear-gradient(145deg, #065f46, #059669);
+  border: 2px solid #10b981;
+  box-shadow:
+    0 0 28px rgba(16, 185, 129, 0.45),
+    0 8px 18px rgba(0, 0, 0, 0.3);
+  animation: pulse-green 2.5s ease-in-out infinite;
+}
+
+/* SLOT TERISI */
+
+.sp-slot.terisi {
+  background: linear-gradient(145deg, #7f1d1d, #dc2626);
+  border: 2px solid #ef4444;
+  box-shadow:
+    0 0 28px rgba(239, 68, 68, 0.4),
+    0 8px 18px rgba(0, 0, 0, 0.3);
+}
+
+/* SLOT UNKNOWN */
+
+.sp-slot.unknown {
+  background: #1e293b;
+  border: 2px solid #334155;
+}
+
+/* ISI SLOT */
+
+.sp-slot-ikon {
+  font-size: 2.6rem;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.sp-slot-nama {
+  font-size: 1.9rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.sp-slot-status {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 8px;
+  opacity: 0.9;
+}
+
+.sp-slot-jarak {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 5px;
+}
+
+/* ANIMASI SLOT KOSONG */
+
+@keyframes pulse-green {
+  0%,
+  100% {
+    box-shadow:
+      0 0 28px rgba(16, 185, 129, 0.45),
+      0 8px 18px rgba(0, 0, 0, 0.3);
+  }
+
+  50% {
+    box-shadow:
+      0 0 50px rgba(16, 185, 129, 0.75),
+      0 8px 18px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ── LEGENDA ───────────────────────── */
+
+.sp-legend {
+  display: flex;
+  gap: 28px;
+  justify-content: center;
+  padding: 12px;
+  border-top: 1px solid #1e293b;
+}
+
+.sp-leg-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.sp-leg-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}
+
+.sp-dot-green {
+  background: #059669;
+}
+
+.sp-dot-red {
+  background: #dc2626;
+}
+
+/* ── STATUS BAR ───────────────────── */
+
+.sp-statusbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 40px;
+  background: #0d1b2a;
+  border-top: 1px solid #1e293b;
+  font-size: 0.8rem;
+  color: #546e7a;
+}
+
+.sp-time-label {
+  margin-left: auto;
+}
+
+.sp-conn-dot {
+  font-size: 0.65rem;
+}
+
+/* STATUS WARNA KONEKSI */
+
+.conn-ok {
+  color: #10b981;
+}
+
+.conn-wait {
+  color: #f59e0b;
+}
+
+.conn-error {
+  color: #ef4444;
+}

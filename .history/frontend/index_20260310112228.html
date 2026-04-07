@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Parking — UMS</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <header class="sp-header">
+      <div class="sp-header-inner">
+        <span class="sp-logo">🏢</span>
+
+        <div>
+          <h1 class="sp-title">SMART PARKING</h1>
+          <p class="sp-subtitle">Universitas Muhammadiyah Surakarta</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- SUMMARY CARD -->
+    <section class="sp-summary">
+      <div class="sp-card-stat sp-green">
+        <div class="sp-stat-num" id="totalKosong">—</div>
+        <div class="sp-stat-label">Slot Tersedia</div>
+      </div>
+
+      <div class="sp-card-stat sp-red">
+        <div class="sp-stat-num" id="totalTerisi">—</div>
+        <div class="sp-stat-label">Slot Terisi</div>
+      </div>
+
+      <div class="sp-card-stat sp-gray">
+        <div class="sp-stat-num" id="totalSlot">—</div>
+        <div class="sp-stat-label">Total Slot</div>
+      </div>
+    </section>
+
+    <!-- PARKING SLOT MAP -->
+    <section class="sp-map">
+      <h2 class="sp-map-title">PETA SLOT PARKIR</h2>
+
+      <div class="sp-grid" id="slotGrid">
+        <div class="sp-loading">Memuat data sensor...</div>
+      </div>
+    </section>
+
+    <!-- LEGENDA STATUS -->
+    <div class="sp-legend">
+      <span class="sp-leg-item">
+        <span class="sp-leg-dot sp-dot-green"></span>
+        KOSONG / TERSEDIA
+      </span>
+
+      <span class="sp-leg-item">
+        <span class="sp-leg-dot sp-dot-red"></span>
+        TERISI
+      </span>
+    </div>
+
+    <!-- STATUS BAR -->
+    <footer class="sp-statusbar">
+      <span class="sp-conn-dot" id="connDot">⬤</span>
+      <span id="connText">Menghubungkan...</span>
+
+      <span class="sp-time-label">
+        Diperbarui:
+        <strong id="lastUpdate">—</strong>
+      </span>
+    </footer>
+
+    <!-- Javascript -->
+    <script src="app.js"></script>
+  </body>
+</html>

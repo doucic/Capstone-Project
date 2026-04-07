@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Petugas — Smart Parking UMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ═══════════════════════════════════════════════════
+       SMART PARKING — DASHBOARD PETUGAS
+       Tema: "Control Room" — industrial-utilitarian,
+       monospaced data display, warna amber-on-dark
+    ═══════════════════════════════════════════════════ */
+
+      :root {
+        --bg: #0c0f14;
+        --surface: #131820;
+        --surface2: #1a2030;
+        --border: #242d3f;
+        --amber: #f59e0b;
+        --amber-dim: #92610a;
+        --green: #10b981;
+        --red: #ef4444;
+        --blue: #3b82f6;
+        --text: #e2e8f0;
+        --muted: #64748b;
+        --mono: "IBM Plex Mono", monospace;
+        --sans: "Space Grotesk", sans-serif;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      /* ── SCROLLBAR ────────────────────────── */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+
+      /* ── LAYOUT ───────────────────────────── */
+      .layout {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        grid-template-columns: 260px 1fr;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* ── TOPBAR ───────────────────────────── */
+      .topbar {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 0 28px;
+        height: 60px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .topbar-badge {
+        background: var(--amber);
+        color: #000;
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        padding: 3px 10px;
+        border-radius: 3px;
+      }
+
+      .topbar-title {
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+
+      .topbar-sub {
+        font-size: 12px;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+
+      .topbar-clock {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--amber);
+        letter-spacing: 2px;
+      }
+
+      .topbar-date {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        text-align: right;
+        margin-top: 2px;
+        letter-spacing: 1px;
+      }
+
+      /* ── SIDEBAR ───────────────────────────── */
+      .sidebar {
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        padding: 24px 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .sidebar-label {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 2px;
+        color: var(--muted);
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+
+      /* Live slot cards */
+      .slot-live {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .slot-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        transition: border-color 0.25s;
+      }
+
+      .slot-card.kosong {
+        border-color: var(--green);
+      }
+      .slot-card.terisi {
+        border-color: var(--red);
+      }
+
+      .slot-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .slot-card.kosong .slot-indicator {
+        background: var(--green);
+        box-shadow: 0 0 8px var(--green);
+      }
+      .slot-card.terisi .slot-indicator {
+        background: var(--red);
+        box-shadow: 0 0 8px var(--red);
+      }
+
+      .slot-info {
+        flex: 1;
+      }
+      .slot-info .name {
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .slot-info .dist {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .slot-badge {
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        padding: 3px 8px;
+        border-radius: 4px;
+      }
+      .slot-card.kosong .slot-badge {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--green);
+      }
+      .slot-card.terisi .slot-badge {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--red);
+      }
+
+      /* Stat pills */
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .stat-pill {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 10px;
+        text-align: center;
+      }
+
+      .stat-pill .num {
+        font-family: var(--mono);
+        font-size: 26px;
+        font-weight: 600;
+        display: block;
+      }
+      .stat-pill .lbl {
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+      .stat-pill.s-hari .num {
+        color: var(--amber);
+      }
+      .stat-pill.s-minggu .num {
+        color: var(--blue);
+      }
+      .stat-pill.s-bulan .num {
+        color: var(--green);
+      }
+      .stat-pill.s-total .num {
+        color: var(--text);
+      }
+
+      /* Conn status */
+      .conn-status {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface2);
+      }
+      .conn-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--muted);
+      }
+      .conn-dot.ok {
+        background: var(--green);
+        box-shadow: 0 0 6px var(--green);
+      }
+      .conn-dot.error {
+        background: var(--red);
+        box-shadow: 0 0 6px var(--red);
+      }
+
+      /* ── MAIN PANEL ────────────────────────── */
+      .main {
+        overflow-y: auto;
+        padding: 24px 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* ── FILTER BAR ────────────────────────── */
+      .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 18px;
+      }
+
+      .filter-bar label {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 1px;
+        white-space: nowrap;
+      }
+
+      .filter-bar input,
+      .filter-bar select {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: var(--mono);
+        font-size: 13px;
+        padding: 7px 12px;
+        border-radius: 6px;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.2s;
+      }
+      .filter-bar input:focus,
+      .filter-bar select:focus {
+        border-color: var(--amber);
+      }
+
+      .filter-bar input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) sepia(1) saturate(5) hue-rotate(5deg);
+        cursor: pointer;
+      }
+
+      .btn-filter {
+        background: var(--amber);
+        color: #000;
+        border: none;
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        padding: 8px 18px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .btn-filter:hover {
+        opacity: 0.85;
+      }
+
+      .btn-reset {
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        font-family: var(--mono);
+        font-size: 12px;
+        padding: 8px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition:
+          color 0.2s,
+          border-color 0.2s;
+      }
+      .btn-reset:hover {
+        color: var(--text);
+        border-color: var(--muted);
+      }
+
+      .filter-info {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      /* ── TABLE ─────────────────────────────── */
+      .table-wrap {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .table-head-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .table-title {
+        font-weight: 700;
+        font-size: 15px;
+      }
+
+      .table-count {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        background: var(--surface2);
+        padding: 3px 10px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+
+      .btn-refresh {
+        margin-left: auto;
+        background: transparent;
+        color: var(--amber);
+        border: 1px solid var(--amber-dim);
+        font-family: var(--mono);
+        font-size: 11px;
+        padding: 6px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        letter-spacing: 1px;
+        transition: background 0.2s;
+      }
+      .btn-refresh:hover {
+        background: rgba(245, 158, 11, 0.08);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead th {
+        background: var(--surface2);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 2px;
+        color: var(--muted);
+        text-transform: uppercase;
+        padding: 11px 20px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+
+      tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: background 0.15s;
+      }
+      tbody tr:last-child {
+        border-bottom: none;
+      }
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      tbody td {
+        padding: 13px 20px;
+        vertical-align: middle;
+      }
+
+      /* Row highlight berdasarkan event */
+      tr.row-masuk {
+        border-left: 3px solid var(--amber);
+      }
+      tr.row-keluar {
+        border-left: 3px solid var(--blue);
+      }
+
+      /* Kolom slot badge */
+      .td-slot {
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--text);
+      }
+
+      /* Event chip */
+      .chip {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        padding: 4px 12px;
+        border-radius: 20px;
+      }
+      .chip-masuk {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--amber);
+        border: 1px solid var(--amber-dim);
+      }
+      .chip-keluar {
+        background: rgba(59, 130, 246, 0.15);
+        color: var(--blue);
+        border: 1px solid #1d4ed8;
+      }
+
+      /* Tanggal & jam */
+      .td-tanggal {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--text);
+        letter-spacing: 0.5px;
+      }
+      .td-jam {
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--amber);
+        letter-spacing: 1px;
+      }
+
+      .td-label {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /* Empty & loading state */
+      .state-msg {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 13px;
+      }
+
+      /* Loading spinner */
+      .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-top-color: var(--amber);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        vertical-align: middle;
+        margin-right: 8px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Pulse dot */
+      @keyframes pulse-dot {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+      .live-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--amber);
+        animation: pulse-dot 1.5s ease-in-out infinite;
+        margin-right: 6px;
+        vertical-align: middle;
+      }
+
+      /* ── SCROLL TO TOP ──────────────────────── */
+      .fab-top {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        background: var(--amber);
+        color: #000;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 18px;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        transition: opacity 0.2s;
+        z-index: 99;
+      }
+      .fab-top.show {
+        display: flex;
+      }
+
+      /* ── ANIMASI BARIS BARU ─────────────────── */
+      @keyframes row-in {
+        from {
+          background: rgba(245, 158, 11, 0.12);
+        }
+        to {
+          background: transparent;
+        }
+      }
+      .row-new {
+        animation: row-in 1.5s ease-out forwards;
+      }
+
+      /* ── RESPONSIVE TWEAK ───────────────────── */
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto 1fr;
+        }
+        .sidebar {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <!-- ══ TOPBAR ══════════════════════════════════════════ -->
+      <header class="topbar">
+        <div class="topbar-badge">PETUGAS</div>
+        <div>
+          <div class="topbar-title">Smart Parking — Dashboard Petugas</div>
+          <div class="topbar-sub">
+            Universitas Muhammadiyah Surakarta &bull; Teknik Informatika
+          </div>
+        </div>
+        <div style="margin-left: auto; text-align: right">
+          <div class="topbar-clock" id="jamSekarang">00:00:00</div>
+          <div class="topbar-date" id="tglSekarang">— — —</div>
+        </div>
+      </header>
+
+      <!-- ══ SIDEBAR ═════════════════════════════════════════ -->
+      <aside class="sidebar">
+        <!-- Live Status -->
+        <div>
+          <div class="sidebar-label">
+            <span class="live-dot"></span>Status Slot Real-Time
+          </div>
+          <div class="slot-live" id="slotLive">
+            <div class="state-msg" style="padding: 20px 0; font-size: 12px">
+              Memuat...
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistik -->
+        <div>
+          <div class="sidebar-label">Kendaraan Masuk</div>
+          <div class="stat-grid">
+            <div class="stat-pill s-hari">
+              <span class="num" id="sHari">—</span>
+              <span class="lbl">Hari Ini</span>
+            </div>
+            <div class="stat-pill s-minggu">
+              <span class="num" id="sMinggu">—</span>
+              <span class="lbl">Minggu Ini</span>
+            </div>
+            <div class="stat-pill s-bulan">
+              <span class="num" id="sBulan">—</span>
+              <span class="lbl">Bulan Ini</span>
+            </div>
+            <div class="stat-pill s-total">
+              <span class="num" id="sTotal">—</span>
+              <span class="lbl">Semua Waktu</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Koneksi -->
+        <div class="conn-status" id="connStatus">
+          <div class="conn-dot" id="connDot"></div>
+          <span id="connText">Menghubungkan...</span>
+        </div>
+      </aside>
+
+      <!-- ══ MAIN ════════════════════════════════════════════ -->
+      <main class="main" id="mainPanel">
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <label>TANGGAL</label>
+          <input type="date" id="fTanggal" />
+
+          <label>SLOT</label>
+          <select id="fSlot">
+            <option value="">Semua Slot</option>
+            <option value="A1">Slot A1</option>
+            <option value="A2">Slot A2</option>
+            <option value="A3">Slot A3</option>
+            <option value="A4">Slot A4</option>
+          </select>
+
+          <label>EVENT</label>
+          <select id="fEvent">
+            <option value="">Semua Event</option>
+            <option value="masuk">Kendaraan Masuk</option>
+            <option value="keluar">Kendaraan Keluar</option>
+          </select>
+
+          <button class="btn-filter" onclick="terapkanFilter()">
+            TERAPKAN
+          </button>
+          <button class="btn-reset" onclick="resetFilter()">RESET</button>
+
+          <div class="filter-info" id="filterInfo">— data</div>
+        </div>
+
+        <!-- Tabel Riwayat -->
+        <div class="table-wrap">
+          <div class="table-head-bar">
+            <div class="table-title">Riwayat Parkir</div>
+            <div class="table-count" id="tableCount">0 data</div>
+            <button class="btn-refresh" onclick="muatRiwayat()">
+              ↻ REFRESH
+            </button>
+          </div>
+
+          <div style="overflow-x: auto">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 50px">#</th>
+                  <th>SLOT</th>
+                  <th>EVENT</th>
+                  <th>TANGGAL</th>
+                  <th>JAM</th>
+                  <th>KETERANGAN</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody">
+                <tr>
+                  <td colspan="6" class="state-msg">
+                    <span class="spinner"></span>Memuat riwayat...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- FAB scroll ke atas -->
+    <button
+      class="fab-top"
+      id="fabTop"
+      onclick="
+        document
+          .getElementById('mainPanel')
+          .scrollTo({ top: 0, behavior: 'smooth' })
+      "
+    >
+      ↑
+    </button>
+
+    <script>
+      // ═══════════════════════════════════════════════════════════════
+      // DASHBOARD PETUGAS — JavaScript
+      // ═══════════════════════════════════════════════════════════════
+
+      // ── KONFIGURASI ──────────────────────────────────────────────────
+      // Ganti sesuai backend yang berjalan:
+      const API_BASE = "http://localhost:3000";
+
+      const REFRESH_RIWAYAT_MS = 8000; // auto-refresh riwayat setiap 8 detik
+      const REFRESH_STATUS_MS = 4000; // refresh slot live setiap 4 detik
+
+      // ── STATE ──────────────────────────────────────────────────────
+      let idRiwayatTerakhir = null; // untuk deteksi data baru (animasi highlight)
+
+      // ── JAM REAL-TIME ──────────────────────────────────────────────
+      function updateJam() {
+        const now = new Date();
+        document.getElementById("jamSekarang").textContent =
+          now.toLocaleTimeString("id-ID", { hour12: false });
+        document.getElementById("tglSekarang").textContent =
+          now.toLocaleDateString("id-ID", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+      }
+      updateJam();
+      setInterval(updateJam, 1000);
+
+      // ── FILTER: set hari ini sebagai default ──────────────────────
+      (function setDefaultDate() {
+        const today = new Date().toISOString().split("T")[0];
+        document.getElementById("fTanggal").value = today;
+      })();
+
+      // ── AMBIL STATUS SLOT (sidebar live) ─────────────────────────
+      async function muatStatusSlot() {
+        try {
+          const res = await fetch(`${API_BASE}/api/status`, {
+            cache: "no-cache",
+          });
+          const data = await res.json();
+
+          const wrap = document.getElementById("slotLive");
+
+          if (!data.sukses || data.slots.length === 0) {
+            wrap.innerHTML =
+              '<div class="state-msg" style="padding:16px 0;font-size:11px;">Menunggu data sensor...</div>';
+            setConn(false);
+            return;
+          }
+
+          wrap.innerHTML = data.slots
+            .map((s) => {
+              const k = s.status === "kosong";
+              return `
+        <div class="slot-card ${s.status}">
+          <div class="slot-indicator"></div>
+          <div class="slot-info">
+            <div class="name">Slot ${s.nama}</div>
+            <div class="dist">${s.jarak.toFixed(1)} cm</div>
+          </div>
+          <div class="slot-badge">${k ? "KOSONG" : "TERISI"}</div>
+        </div>`;
+            })
+            .join("");
+
+          setConn(true);
+        } catch {
+          setConn(false);
+        }
+      }
+
+      // ── AMBIL STATISTIK RINGKASAN ─────────────────────────────────
+      async function muatRingkasan() {
+        try {
+          const res = await fetch(`${API_BASE}/api/riwayat/ringkasan`, {
+            cache: "no-cache",
+          });
+          const data = await res.json();
+          if (data.sukses) {
+            document.getElementById("sHari").textContent = data.hari_ini;
+            document.getElementById("sMinggu").textContent = data.minggu_ini;
+            document.getElementById("sBulan").textContent = data.bulan_ini;
+            document.getElementById("sTotal").textContent = data.total_all;
+          }
+        } catch {
+          /* silent */
+        }
+      }
+
+      // ── AMBIL RIWAYAT ─────────────────────────────────────────────
+      async function muatRiwayat() {
+        const tanggal = document.getElementById("fTanggal").value;
+        const slot = document.getElementById("fSlot").value;
+        const event = document.getElementById("fEvent").value;
+
+        const params = new URLSearchParams({ limit: 200 });
+        if (tanggal) params.set("tanggal", tanggal);
+        if (slot) params.set("slot", slot);
+        if (event) params.set("event", event);
+
+        const tbody = document.getElementById("tableBody");
+
+        try {
+          const res = await fetch(`${API_BASE}/api/riwayat?${params}`, {
+            cache: "no-cache",
+          });
+          const data = await res.json();
+
+          if (!data.sukses) throw new Error(data.pesan);
+
+          // Update counter
+          const total = data.riwayat.length;
+          document.getElementById("tableCount").textContent = `${total} data`;
+          document.getElementById("filterInfo").textContent =
+            total > 0 ? `${total} hasil ditemukan` : "Tidak ada data";
+
+          if (total === 0) {
+            tbody.innerHTML = `
+        <tr><td colspan="6" class="state-msg">
+          Tidak ada riwayat untuk filter yang dipilih.
+        </td></tr>`;
+            return;
+          }
+
+          // Deteksi data baru (baris pertama/terbaru)
+          const idBaru = data.riwayat[0]?.id;
+          const adaDataBaru = idRiwayatTerakhir && idBaru !== idRiwayatTerakhir;
+          idRiwayatTerakhir = idBaru;
+
+          // Render tabel
+          tbody.innerHTML = data.riwayat
+            .map((r, i) => {
+              const isNew = i === 0 && adaDataBaru;
+              const chipKelas =
+                r.event === "masuk" ? "chip-masuk" : "chip-keluar";
+              const chipLabel = r.event === "masuk" ? "⬆ MASUK" : "⬇ KELUAR";
+              const rowKelas = `row-${r.event}${isNew ? " row-new" : ""}`;
+
+              return `
+        <tr class="${rowKelas}">
+          <td class="td-label" style="font-family:var(--mono);font-size:12px;">${i + 1}</td>
+          <td class="td-slot">Slot ${r.slot}</td>
+          <td><span class="chip ${chipKelas}">${chipLabel}</span></td>
+          <td class="td-tanggal">${r.tanggal}</td>
+          <td class="td-jam">${r.jam}</td>
+          <td class="td-label">${r.label}</td>
+        </tr>`;
+            })
+            .join("");
+
+          setConn(true);
+        } catch (err) {
+          tbody.innerHTML = `
+      <tr><td colspan="6" class="state-msg" style="color:var(--red);">
+        Gagal memuat data — ${err.message}
+      </td></tr>`;
+          setConn(false);
+        }
+      }
+
+      // ── FILTER ACTIONS ────────────────────────────────────────────
+      function terapkanFilter() {
+        idRiwayatTerakhir = null; // reset deteksi baru
+        muatRiwayat();
+      }
+
+      function resetFilter() {
+        const today = new Date().toISOString().split("T")[0];
+        document.getElementById("fTanggal").value = today;
+        document.getElementById("fSlot").value = "";
+        document.getElementById("fEvent").value = "";
+        idRiwayatTerakhir = null;
+        muatRiwayat();
+      }
+
+      // ── KONEKSI INDIKATOR ─────────────────────────────────────────
+      function setConn(ok) {
+        const dot = document.getElementById("connDot");
+        const text = document.getElementById("connText");
+        dot.className = `conn-dot ${ok ? "ok" : "error"}`;
+        text.textContent = ok ? "Terhubung — data aktif" : "Koneksi terputus";
+      }
+
+      // ── FAB scroll to top ─────────────────────────────────────────
+      document
+        .getElementById("mainPanel")
+        .addEventListener("scroll", function () {
+          document
+            .getElementById("fabTop")
+            .classList.toggle("show", this.scrollTop > 200);
+        });
+
+      // ── INIT & INTERVAL ───────────────────────────────────────────
+      muatStatusSlot();
+      muatRingkasan();
+      muatRiwayat();
+
+      setInterval(muatStatusSlot, REFRESH_STATUS_MS);
+      setInterval(muatRingkasan, 30000); // ringkasan setiap 30 detik
+      setInterval(muatRiwayat, REFRESH_RIWAYAT_MS);
+    </script>
+  </body>
+</html>

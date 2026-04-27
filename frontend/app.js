@@ -270,3 +270,34 @@ function renderChart() {
 // Inisialisasi komponen tambahan
 renderChart();
 renderLog();
+
+
+// ── MOBILE TAB SWITCHER ───────────────────────────────
+window.switchMobileTab = function(tab, btn) {
+  // Reset semua tombol
+  document.querySelectorAll(".sp-mtab").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  const peta    = document.getElementById("mobile-peta");
+  const sidebar = document.getElementById("mobile-sidebar");
+
+  if (tab === "peta") {
+    if (peta)    { peta.style.display = "flex"; }
+    if (sidebar) { sidebar.style.display = "none"; }
+  } else {
+    // chart atau log → tampilkan sidebar
+    if (peta)    { peta.style.display = "none"; }
+    if (sidebar) {
+      sidebar.style.display = "flex";
+      sidebar.classList.add("tab-active");
+    }
+  }
+
+  // Scroll ke panel yang relevan di sidebar
+  if (tab === "chart") {
+    document.querySelector(".sp-panel")?.scrollIntoView({ behavior: "smooth" });
+  }
+  if (tab === "log") {
+    document.querySelector(".sp-panel-log")?.scrollIntoView({ behavior: "smooth" });
+  }
+};

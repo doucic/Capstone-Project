@@ -52,6 +52,12 @@
         <span class="sp-fi-num"   id="floorNum">1</span>
         <span class="sp-fi-label" id="floorLabel">BASEMENT / GROUND FLOOR</span>
       </div>
+      <!-- TAB NAVIGASI MOBILE (hanya muncul di layar kecil) -->
+      <nav class="sp-mobile-tabs">
+        <button class="sp-mtab active" onclick="switchMobileTab('peta', this)">🗺 PETA</button>
+        <button class="sp-mtab" onclick="switchMobileTab('chart', this)">📊 GRAFIK</button>
+        <button class="sp-mtab" onclick="switchMobileTab('log', this)">📋 AKTIVITAS</button>
+      </nav>
     </div>
 
     <!-- ═══ SUMMARY CARD (asli + tambah kartu ke-4 Hunian) ════ -->
@@ -92,7 +98,7 @@
     <div class="sp-main">
 
       <!-- KIRI: PARKING SLOT MAP (asli, dimodifikasi jadi 4x2) -->
-      <section class="sp-map">
+      <section class="sp-map" id="mobile-peta">
         <h2 class="sp-map-title" id="petaTitle">PETA SLOT PARKIR — LANTAI 1</h2>
 
         <div class="sp-peta-body">
@@ -135,7 +141,7 @@
       </section>
 
       <!-- TAMBAHAN: SIDEBAR kanan -->
-      <aside class="sp-sidebar">
+      <aside class="sp-sidebar" id="mobile-sidebar">
 
         <!-- Grafik hunian -->
         <div class="sp-panel">

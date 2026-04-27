@@ -692,3 +692,114 @@ body {
 .lb-masuk  { background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid #10b981; }
 .lb-keluar { background: rgba(239,68,68,0.12);  color: #ef4444; border: 1px solid #ef4444; }
 .sp-log-dur { color: #546e7a; font-size: 0.6rem; text-align: right; }
+
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE MOBILE 
+═══════════════════════════════════════════════════════ */
+
+/* ── TAB MOBILE ─────────────── */
+.sp-mobile-tabs {
+  display: none;
+}
+
+/* ── BREAKPOINT UTAMA: layar ≤ 768px ─────────────────── */
+@media (max-width: 768px) {
+
+  /* HEADER: lebih compact */
+  .sp-header        { padding: 10px 16px; }
+  .sp-title         { font-size: 1.3rem; letter-spacing: 2px; }
+  .sp-subtitle      { font-size: 0.7rem; }
+  .sp-clock         { font-size: 1.1rem; }
+  .sp-logo          { font-size: 1.8rem; }
+
+  /* FLOOR BAR: scroll horizontal jika overflow */
+  .sp-floor-bar     { padding: 7px 16px; overflow-x: auto; }
+  .sp-floor-info    { display: none; } /* sembunyikan info lantai kanan */
+
+  /* SUMMARY: dari 4 berjajar → grid 2x2 */
+  .sp-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 12px 16px;
+    gap: 10px;
+  }
+  .sp-card-stat     { max-width: 100%; }
+  .sp-stat-num      { font-size: 2.4rem; }
+
+  /* CAPACITY BAR */
+  .sp-capbar        { padding: 0 16px 10px; }
+
+  /* TAB MOBILE: tampilkan */
+  .sp-mobile-tabs {
+    display: flex;
+    border-bottom: 1px solid #1e293b;
+    background: #0d1b2a;
+    flex-shrink: 0;
+  }
+  .sp-mtab {
+    flex: 1;
+    padding: 9px 0;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #546e7a;
+    font-family: "Inter", sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sp-mtab.active {
+    color: #38bdf8;
+    border-bottom-color: #38bdf8;
+  }
+
+  /* MAIN LAYOUT: dari 2 kolom → 1 kolom */
+  .sp-main {
+    grid-template-columns: 1fr;
+  }
+
+  /* SIDEBAR: sembunyikan di mobile (konten ada di tab) */
+  .sp-sidebar {
+    display: none;
+  }
+  /* Sidebar tampil kembali kalau tab aktif */
+  .sp-sidebar.tab-active {
+    display: flex;
+    border-right: none;
+    border-top: 1px solid #1e293b;
+  }
+
+  /* PETA: padding lebih kecil */
+  .sp-main .sp-map  { padding: 12px 16px; border-right: none; }
+  .sp-map-title     { font-size: 0.7rem; letter-spacing: 2px; }
+
+  /* SLOT PARKIR: sedikit lebih kecil */
+  .sp-slot          { padding: 14px 6px; border-radius: 14px; }
+  .sp-slot-ikon     { font-size: 1.8rem; }
+  .sp-slot-nama     { font-size: 1.3rem; }
+  .sp-slot-status   { font-size: 0.6rem; }
+  .sp-slot-jarak    { font-size: 0.58rem; }
+
+  /* LEGENDA */
+  .sp-legend        { gap: 14px; }
+  .sp-leg-item      { font-size: 0.65rem; }
+
+  /* STATUS BAR */
+  .sp-statusbar     { padding: 6px 16px; font-size: 0.7rem; }
+
+  /* ALERT BANNER */
+  .sp-alert         { padding: 6px 16px; }
+}
+
+/* ── BREAKPOINT KECIL: layar ≤ 480px (HP kecil) ──────── */
+@media (max-width: 480px) {
+  .sp-title         { font-size: 1rem; letter-spacing: 1px; }
+  .sp-clock         { font-size: 0.9rem; }
+  .sp-stat-num      { font-size: 2rem; }
+  .sp-slot-ikon     { font-size: 1.4rem; }
+  .sp-slot-nama     { font-size: 1.1rem; }
+  .sp-floor-btn     { padding: 4px 10px; font-size: 0.62rem; }
+}

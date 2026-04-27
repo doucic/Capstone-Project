@@ -5,15 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Smart Parking — UMS</title>
 
-    <!-- Bootstrap 5 -->
+    <!-- Google Font — tambah JetBrains Mono untuk jam digital -->
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-
-    <!-- Google Font -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
 
@@ -22,70 +16,162 @@
   </head>
 
   <body>
-    <!-- HEADER -->
+
+    <!-- ═══ HEADER (asli + tambah jam kanan) ══════════════════ -->
     <header class="sp-header">
       <div class="sp-header-inner">
         <span class="sp-logo">🏢</span>
-
         <div>
           <h1 class="sp-title">SMART PARKING</h1>
           <p class="sp-subtitle">Universitas Muhammadiyah Surakarta</p>
         </div>
+
+        <!-- TAMBAHAN: jam digital kanan -->
+        <div class="sp-header-right">
+          <div class="sp-clock" id="clock">--:--:--</div>
+          <div class="sp-date"  id="dateLabel">--</div>
+        </div>
       </div>
     </header>
 
-    <!-- SUMMARY CARD -->
+    <!-- TAMBAHAN: alert banner (tersembunyi, muncul jika hunian >= 80%) -->
+    <div class="sp-alert" id="alertBanner">
+      <span class="sp-alert-dot"></span>
+      <span>Peringatan: Parkir hampir penuh! Sisa slot sangat terbatas.</span>
+    </div>
+
+    <!-- TAMBAHAN: floor tabs -->
+    <div class="sp-floor-bar">
+      <span class="sp-floor-label">PILIH LANTAI</span>
+      <div class="sp-floor-tabs">
+        <button class="sp-floor-btn active" data-floor="1" onclick="switchFloor(1)">LANTAI 1</button>
+        <button class="sp-floor-btn"        data-floor="2" onclick="switchFloor(2)">LANTAI 2</button>
+        <button class="sp-floor-btn"        data-floor="3" onclick="switchFloor(3)">LANTAI 3</button>
+      </div>
+      <div class="sp-floor-info">
+        <span class="sp-fi-num"   id="floorNum">1</span>
+        <span class="sp-fi-label" id="floorLabel">BASEMENT / GROUND FLOOR</span>
+      </div>
+    </div>
+
+    <!-- ═══ SUMMARY CARD (asli + tambah kartu ke-4 Hunian) ════ -->
     <section class="sp-summary">
       <div class="sp-card-stat sp-green">
         <div class="sp-stat-num" id="totalKosong">—</div>
         <div class="sp-stat-label">Slot Tersedia</div>
       </div>
-
       <div class="sp-card-stat sp-red">
         <div class="sp-stat-num" id="totalTerisi">—</div>
         <div class="sp-stat-label">Slot Terisi</div>
       </div>
-
       <div class="sp-card-stat sp-gray">
         <div class="sp-stat-num" id="totalSlot">—</div>
         <div class="sp-stat-label">Total Slot</div>
       </div>
-    </section>
 
-    <!-- PARKING SLOT MAP -->
-    <section class="sp-map">
-      <h2 class="sp-map-title">PETA SLOT PARKIR</h2>
-
-      <div class="sp-grid" id="slotGrid">
-        <div class="sp-loading">Memuat data sensor...</div>
+      <!-- TAMBAHAN: kartu ke-4 -->
+      <div class="sp-card-stat sp-blue">
+        <div class="sp-stat-num" id="pctStat">—</div>
+        <div class="sp-stat-label">Hunian</div>
       </div>
     </section>
 
-    <!-- LEGENDA STATUS -->
-    <div class="sp-legend">
-      <span class="sp-leg-item">
-        <span class="sp-leg-dot sp-dot-green"></span>
-        KOSONG / TERSEDIA
-      </span>
-
-      <span class="sp-leg-item">
-        <span class="sp-leg-dot sp-dot-red"></span>
-        TERISI
-      </span>
+    <!-- TAMBAHAN: capacity bar -->
+    <div class="sp-capbar">
+      <div class="sp-capbar-pct" id="capPct">— terisi</div>
+      <div class="sp-capbar-track">
+        <div class="sp-capbar-fill" id="capFill" style="width:0%"></div>
+        <div class="sp-capbar-marker"><span>80%</span></div>
+      </div>
+      <div class="sp-capbar-labels">
+        <span>0%</span><span>Batas wajar</span><span>100%</span>
+      </div>
     </div>
 
-    <!-- STATUS BAR -->
+    <!-- ═══ MAIN: peta kiri + sidebar kanan ═══════════════════ -->
+    <div class="sp-main">
+
+      <!-- KIRI: PARKING SLOT MAP (asli, dimodifikasi jadi 4x2) -->
+      <section class="sp-map">
+        <h2 class="sp-map-title" id="petaTitle">PETA SLOT PARKIR — LANTAI 1</h2>
+
+        <div class="sp-peta-body">
+          <div class="sp-road-label">← MASUK</div>
+
+          <div class="sp-grid-wrap">
+            <!-- Baris A: A1–A4 -->
+            <div class="sp-row-label">BARIS A</div>
+            <div class="sp-grid" id="rowA">
+              <div class="sp-loading">Memuat data sensor...</div>
+            </div>
+
+            <!-- Jalur kendaraan tengah -->
+            <div class="sp-jalan">
+              <div class="sp-jalan-line"></div>
+              <span class="sp-jalan-text">JALUR KENDARAAN</span>
+              <div class="sp-jalan-line"></div>
+            </div>
+
+            <!-- Baris B: B1–B4 -->
+            <div class="sp-row-label">BARIS B</div>
+            <div class="sp-grid" id="rowB"></div>
+          </div>
+
+          <div class="sp-road-label">KELUAR →</div>
+        </div>
+
+        <!-- LEGENDA STATUS (asli) -->
+        <div class="sp-legend">
+          <span class="sp-leg-item">
+            <span class="sp-leg-dot sp-dot-green"></span>KOSONG / TERSEDIA
+          </span>
+          <span class="sp-leg-item">
+            <span class="sp-leg-dot sp-dot-red"></span>TERISI
+          </span>
+          <span class="sp-leg-item">
+            <span class="sp-leg-dot sp-dot-gray"></span>TIDAK AKTIF
+          </span>
+        </div>
+      </section>
+
+      <!-- TAMBAHAN: SIDEBAR kanan -->
+      <aside class="sp-sidebar">
+
+        <!-- Grafik hunian -->
+        <div class="sp-panel">
+          <div class="sp-panel-title">RIWAYAT HUNIAN (8 JAM)</div>
+          <div class="sp-chart-wrap">
+            <div class="sp-chart-y">
+              <span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span>
+            </div>
+            <div class="sp-chart-inner">
+              <div class="sp-chart-grid">
+                <div></div><div></div><div></div><div></div>
+              </div>
+              <div class="sp-chart-bars" id="chartBars"></div>
+            </div>
+          </div>
+          <div class="sp-chart-x" id="chartX"></div>
+        </div>
+
+        <!-- Log aktivitas -->
+        <div class="sp-panel sp-panel-log">
+          <div class="sp-panel-title">AKTIVITAS TERBARU</div>
+          <div class="sp-log" id="logTable"></div>
+        </div>
+
+      </aside>
+    </div>
+
+    <!-- ═══ STATUS BAR (asli) ══════════════════════════════════ -->
     <footer class="sp-statusbar">
       <span class="sp-conn-dot" id="connDot">⬤</span>
       <span id="connText">Menghubungkan...</span>
-
       <span class="sp-time-label">
-        Diperbarui:
-        <strong id="lastUpdate">—</strong>
+        Diperbarui: <strong id="lastUpdate">—</strong>
       </span>
     </footer>
 
-    <!-- Javascript -->
     <script src="app.js"></script>
   </body>
 </html>
